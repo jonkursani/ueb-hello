@@ -2,8 +2,10 @@ package dev.jonkursani.hello;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan // per me bo enable @ConfigurationProperties
 public class HelloApplication {
 
     public static void main(String[] args) {
