@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quote</title>
+</head>
+<body>
+    <h1 th:text="${quote.text}"></h1>
+    <p>
+        Filtro autorin:
+        <a th:href="@{/pages/quotes(author=${quote.author})}"
+           th:text="${quote.author}"></a>
+    </p>
+    <p>
+        <a th:href="@{/pages/quotes}">Back to Quotes</a>
+    </p>
+</body>
+</html>

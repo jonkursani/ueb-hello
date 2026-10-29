@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quotes</title>
+</head>
+<body>
+    <h1>Quotes List</h1>
+
+    <p th:text="${quotes.size()} + ' quotes'"></p>
+    <p th:if="${quotes.isEmpty()}">No quotes found.</p>
+    <table border="1">
+        <tr>
+            <th>#</th>
+            <th>Quote</th>
+            <th>Author</th>
+        </tr>
+        <tr th:each="q : ${quotes}">
+            <td th:text="${q.id}">1</td>
+            <td>
+                <a th:href="@{/pages/quotes/{id}(id=${q.id})}"
+                   th:text="${q.text}"></a>
+            </td>
+            <td th:text="${q.author}">Uvejs</td>
+        </tr>
+    </table>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
