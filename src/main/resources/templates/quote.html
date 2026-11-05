@@ -1,11 +1,12 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, '')}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Quote</title>
 </head>
 <body>
+<main>
     <h1 th:text="${quote.text}"></h1>
     <p>
         Filtro autorin:
@@ -15,5 +16,6 @@
     <p>
         <a th:href="@{/pages/quotes}">Back to Quotes</a>
     </p>
+</main>
 </body>
 </html>

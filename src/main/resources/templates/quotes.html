@@ -1,11 +1,18 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, 'quotes')}"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--    <link rel="stylesheet" th:href="@{/css/app.css}">-->
     <title>Quotes</title>
 </head>
 <body>
+<!--    <div th:replace="~{fragments :: header('quotes')}"></div>-->
+<!--    <div th:insert="~{fragments :: footer}"></div>-->
+
+<main>
     <h1>Quotes List</h1>
 
     <p th:text="${quotes.size()} + ' quotes'"></p>
@@ -25,6 +32,9 @@
             <td th:text="${q.author}">Uvejs</td>
         </tr>
     </table>
+</main>
+
+<!--    <div th:replace="~{fragments :: footer}"></div>-->
 </body>
 </html>
 

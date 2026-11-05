@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"
+      th:fragment="layout(title, content, active)"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+<!--    <title th:text="${title}">Title</title>-->
+    <title th:replace="${title}">Title</title>
+</head>
+<body>
+    <div th:replace="~{fragments :: header(${active})}"></div>
+
+    <!--    Kontenti dinamik qe ndrrohet    -->
+    <main th:replace="${content}">Content</main>
+
+    <div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

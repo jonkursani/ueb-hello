@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <header th:fragment="header(active)">
+        <nav>
+            <a th:href="@{/pages/quotes}"
+               th:classappend="${active == 'quotes'} ? 'active' : ''">
+                Quotes
+            </a>
+            <a th:href="@{/pages/about}"
+               th:classappend="${active == 'about'} ? 'active' : ''">
+                About us
+            </a>
+        </nav>
+    </header>
+
+    <footer th:fragment="footer">
+        <p>&copy; Quotes - Cacttus Education - All rights reserved.</p>
+    </footer>
+</body>
+</html>
