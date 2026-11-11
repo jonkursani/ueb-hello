@@ -17,6 +17,10 @@
 
     <p th:text="${quotes.size()} + ' quotes'"></p>
     <p th:if="${quotes.isEmpty()}">No quotes found.</p>
+
+    <!-- Flash attribute -->
+    <p class="flash" th:if="${message}" th:text="${message}"></p>
+
     <table border="1">
         <tr>
             <th>#</th>

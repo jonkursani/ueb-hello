@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, 'quote-form')}"
+>
+<head>
+    <title>Add quote</title>
+</head>
+<body>
+<main>
+    <h1>Add a new quote</h1>
+
+    <form th:object="${quote}"
+          method="post"
+          th:action="@{/pages/quotes}">
+        <div>
+            <label for="author">Author:</label>
+<!--            <input type="text" id="author" th:field="${quote.author}" required>-->
+            <input type="text" id="author" th:field="*{author}">
+            <p class="error" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></p>
+        </div>
+        <div>
+            <label for="text">Text:</label>
+            <textarea id="text" th:field="*{text}"></textarea>
+            <p class="error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></p>
+        </div>
+        <div>
+            <label for="year">Year:</label>
+            <input type="number" id="year" th:field="*{year}">
+            <p class="error" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></p>
+        </div>
+        <button type="submit">Add Quote</button>
+    </form>
+</main>
+
+</body>
+</html>

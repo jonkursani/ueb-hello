@@ -15,6 +15,10 @@
                th:classappend="${active == 'about'} ? 'active' : ''">
                 About us
             </a>
+            <a th:href="@{/pages/quotes/new}"
+               th:classappend="${active == 'quote-form'} ? 'active' : ''">
+                Add Quote
+            </a>
         </nav>
     </header>
 
