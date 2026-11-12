@@ -3,51 +3,107 @@
       th:replace="~{layout :: layout(~{::title}, ~{::main}, 'quotes')}"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
-<!--    <link rel="stylesheet" th:href="@{/css/app.css}">-->
     <title>Quotes</title>
 </head>
 <body>
-<!--    <div th:replace="~{fragments :: header('quotes')}"></div>-->
-<!--    <div th:insert="~{fragments :: footer}"></div>-->
-
-<main>
-    <h1>Quotes List</h1>
-
-    <p th:text="${quotes.size()} + ' quotes'"></p>
-    <p th:if="${quotes.isEmpty()}">No quotes found.</p>
-
+<main class="site-main">
     <!-- Flash attribute -->
-    <p class="flash" th:if="${message}" th:text="${message}"></p>
+    <div class="flash flash--success" role="status" th:if="${message}">
+        <svg th:replace="~{fragments :: icon('check')}"></svg>
+        <span th:text="${message}">Quote saved.</span>
+    </div>
 
-    <table border="1">
-        <tr>
-            <th>#</th>
-            <th>Quote</th>
-            <th>Author</th>
-        </tr>
-        <tr th:each="q : ${quotes}">
-            <td th:text="${q.id}">1</td>
-            <td>
-                <a th:href="@{/pages/quotes/{id}(id=${q.id})}"
-                   th:text="${q.text}"></a>
-            </td>
-            <td th:text="${q.author}">Uvejs</td>
-        </tr>
-    </table>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Quotes</h1>
+            <p class="page-sub">
+                <span th:text="${quotes.size()} + (${quotes.size() == 1} ? ' quote' : ' quotes')">0 quotes</span>
+                <span th:if="${param.author}" th:text="' by ' + ${param.author}"></span>
+            </p>
+        </div>
+        <a class="btn btn--primary" th:href="@{/pages/quotes/new}">
+            <svg th:replace="~{fragments :: icon('plus')}"></svg>Add quote
+        </a>
+    </div>
+
+    <!-- Filtri: GET /pages/quotes?author=... -->
+    <form class="filter-bar filter-bar--single" role="search" method="get" th:action="@{/pages/quotes}">
+        <div class="field">
+            <label class="field__label" for="author">Author</label>
+            <div class="search">
+                <span class="search__icon"><svg th:replace="~{fragments :: icon('search')}"></svg></span>
+                <input class="input" id="author" name="author" placeholder="e.g. Uvejs"
+                       th:value="${param.author}" autocomplete="off">
+            </div>
+        </div>
+        <div class="filter-bar__actions">
+            <button class="btn btn--primary" type="submit">Search</button>
+            <a class="btn btn--secondary" th:href="@{/pages/quotes}">Clear</a>
+        </div>
+    </form>
+
+    <!-- Gjendja bosh -->
+    <div class="empty-state" th:if="${quotes.isEmpty()}">
+        <div class="empty-state__mark" aria-hidden="true">“</div>
+        <th:block th:if="${param.author}">
+            <h2>No results</h2>
+            <p th:text="'No quotes match the author “' + ${param.author} + '”.'">No quotes match.</p>
+            <a class="btn btn--secondary" th:href="@{/pages/quotes}">Clear filter</a>
+        </th:block>
+        <th:block th:unless="${param.author}">
+            <h2>No quotes found.</h2>
+            <p>Save the first quote that made you stop while reading.</p>
+            <a class="btn btn--primary" th:href="@{/pages/quotes/new}">
+                <svg th:replace="~{fragments :: icon('plus')}"></svg>Add quote
+            </a>
+        </th:block>
+    </div>
+
+    <div class="table-wrap" th:unless="${quotes.isEmpty()}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Quote</th>
+                <th style="width: 200px">Author</th>
+                <th class="num" style="width: 100px">Year</th>
+                <th class="col-actions"><span class="sr-only">Actions</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="q : ${quotes}">
+                <td>
+                    <div class="cell-quote">
+                        <a th:href="@{/pages/quotes/{id}(id=${q.id})}" th:text="${q.text}">Quote text</a>
+                    </div>
+                    <div class="cell-meta" th:text="'#' + ${q.id}">#1</div>
+                </td>
+                <td data-label="Author">
+                    <a th:href="@{/pages/quotes(author=${q.author})}" th:text="${q.author}">Uvejs</a>
+                </td>
+                <td data-label="Year" class="num muted" th:text="${q.year} ?: '—'">2023</td>
+                <td class="col-actions">
+                    <div class="row-actions">
+                        <a class="btn btn--secondary btn--sm" th:href="@{/pages/quotes/{id}/edit(id=${q.id})}">Edit</a>
+                        <!-- Konfirmimi i fshirjes pa JavaScript: <details> e hap panelin me POST formen -->
+                        <details class="confirm">
+                            <summary class="btn btn--danger btn--sm">Delete</summary>
+                            <div class="confirm__panel">
+                                <p><b>Delete this quote?</b>This cannot be undone.</p>
+                                <div class="confirm__actions">
+                                    <button class="btn btn--secondary btn--sm" type="button"
+                                            onclick="this.closest('details').open = false">Cancel</button>
+                                    <form th:action="@{/pages/quotes/{id}/delete(id=${q.id})}" method="post">
+                                        <button class="btn btn--danger btn--sm" type="submit">Yes, delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
-
-<!--    <div th:replace="~{fragments :: footer}"></div>-->
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

@@ -6,16 +6,33 @@
     <title>Quote</title>
 </head>
 <body>
-<main>
-    <h1 th:text="${quote.text}"></h1>
-    <p>
-        Filtro autorin:
-        <a th:href="@{/pages/quotes(author=${quote.author})}"
-           th:text="${quote.author}"></a>
-    </p>
-    <p>
-        <a th:href="@{/pages/quotes}">Back to Quotes</a>
-    </p>
+<main class="site-main">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a th:href="@{/pages/quotes}">Quotes</a>
+        <span aria-hidden="true">/</span>
+        <span th:text="'#' + ${quote.id}">#1</span>
+    </nav>
+
+    <article class="quote-card" style="max-width: 760px">
+        <div class="quote-card__mark" aria-hidden="true">“</div>
+        <blockquote class="quote-card__text" th:text="${quote.text}">Quote text</blockquote>
+        <p class="quote-card__author">
+            <a th:href="@{/pages/quotes(author=${quote.author})}"
+               th:text="${quote.author}"
+               th:title="'All quotes by ' + ${quote.author}">Uvejs</a>
+        </p>
+        <p class="quote-card__meta">
+            <span th:if="${quote.year}" th:text="${quote.year}">2023</span>
+            <span th:if="${quote.year}" aria-hidden="true">·</span>
+            <span th:text="'#' + ${quote.id}">#1</span>
+        </p>
+        <div class="quote-card__actions">
+            <a class="btn btn--secondary btn--sm" th:href="@{/pages/quotes}">
+                <svg th:replace="~{fragments :: icon('back')}"></svg>Back to Quotes
+            </a>
+            <a class="btn btn--secondary btn--sm" th:href="@{/pages/quotes/{id}/edit(id=${quote.id})}">Edit</a>
+        </div>
+    </article>
 </main>
 </body>
 </html>

@@ -43,7 +43,7 @@ public class QuoteController {
     @PostMapping
     public Quote create(@RequestParam String author, @RequestParam String text) {
         var quote = new Quote();
-        quote.setAuthor(author);
+//        quote.setAuthor(author);
         quote.setText(text);
         return store.save(quote);
     }

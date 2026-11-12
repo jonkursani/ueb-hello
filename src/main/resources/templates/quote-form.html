@@ -1,37 +1,102 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::title}, ~{::main}, 'quote-form')}"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, ${quote.id == null ? 'quote-form' : ''})}"
 >
 <head>
-    <title>Add quote</title>
+    <title th:text="${quote.id == null ? 'Add quote' : 'Update quote'}">Quote form title</title>
 </head>
 <body>
-<main>
-    <h1>Add a new quote</h1>
+<main class="site-main">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a th:href="@{/pages/quotes}">Quotes</a>
+        <span aria-hidden="true">/</span>
+        <span th:text="${quote.id == null ? 'New' : 'Edit #' + quote.id}">New</span>
+    </nav>
 
-    <form th:object="${quote}"
-          method="post"
-          th:action="@{/pages/quotes}">
+    <div class="page-head">
         <div>
-            <label for="author">Author:</label>
-<!--            <input type="text" id="author" th:field="${quote.author}" required>-->
-            <input type="text" id="author" th:field="*{author}">
-            <p class="error" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></p>
+            <h1 class="page-title" th:text="${quote.id == null ? 'Add a new quote' : 'Update quote'}">Quote form</h1>
+            <p class="page-sub">Fields marked * are required.</p>
         </div>
-        <div>
-            <label for="text">Text:</label>
-            <textarea id="text" th:field="*{text}"></textarea>
-            <p class="error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></p>
+    </div>
+
+    <div class="panel" style="max-width: 720px">
+        <!-- Permbledhja e gabimeve ne krye -->
+        <div class="flash flash--error" role="alert" th:if="${#fields.hasErrors('${quote.*}')}">
+            <svg th:replace="~{fragments :: icon('alert')}"></svg>
+            <span>Please fix the highlighted fields below.</span>
         </div>
-        <div>
-            <label for="year">Year:</label>
-            <input type="number" id="year" th:field="*{year}">
-            <p class="error" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></p>
-        </div>
-        <button type="submit">Add Quote</button>
-    </form>
+
+        <form class="form"
+              th:object="${quote}"
+              method="post"
+              th:action="${quote.id == null}
+                         ? @{/pages/quotes}
+                         : @{/pages/quotes/{id}(id=${quote.id})}">
+
+            <div class="field" th:classappend="${#fields.hasErrors('text')} ? 'has-error'">
+                <label class="field__label" for="text">Text <span class="req" aria-hidden="true">*</span></label>
+                <textarea class="textarea" id="text" th:field="*{text}"
+                          placeholder="Write the quote exactly as you read it…"
+                          aria-describedby="text-count text-err"
+                          th:attr="aria-invalid=${#fields.hasErrors('text')}"
+                          oninput="document.getElementById('text-count').textContent = this.value.length + ' / 300'"></textarea>
+                <span class="counter" id="text-count"
+                      th:text="(${quote.text != null} ? ${#strings.length(quote.text)} : 0) + ' / 300'">0 / 300</span>
+                <span class="field__error" id="text-err" th:if="${#fields.hasErrors('text')}">
+                    <svg th:replace="~{fragments :: icon('alert')}"></svg>
+                    <span th:errors="*{text}">Quote is required</span>
+                </span>
+            </div>
+
+            <div class="field" th:classappend="${#fields.hasErrors('author')} ? 'has-error'">
+                <label class="field__label" for="author">Author <span class="req" aria-hidden="true">*</span></label>
+                <input class="input" type="text" id="author" th:field="*{author}"
+                       aria-describedby="author-err"
+                       th:attr="aria-invalid=${#fields.hasErrors('author')}">
+                <span class="field__error" id="author-err" th:if="${#fields.hasErrors('author')}">
+                    <svg th:replace="~{fragments :: icon('alert')}"></svg>
+                    <span th:errors="*{author}">Author is required</span>
+                </span>
+            </div>
+
+            <div class="field" th:classappend="${#fields.hasErrors('year')} ? 'has-error'">
+                <label class="field__label" for="year">Year</label>
+                <input class="input" type="number" id="year" th:field="*{year}" style="max-width: 200px"
+                       aria-describedby="year-help year-err"
+                       th:attr="aria-invalid=${#fields.hasErrors('year')}">
+                <span class="field__help" id="year-help">Optional.</span>
+                <span class="field__error" id="year-err" th:if="${#fields.hasErrors('year')}">
+                    <svg th:replace="~{fragments :: icon('alert')}"></svg>
+                    <span th:errors="*{year}">Year cannot be negative</span>
+                </span>
+            </div>
+
+            <div class="form__actions" style="justify-content: space-between">
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; flex: 1">
+                    <button class="btn btn--primary" type="submit"
+                            th:text="${quote.id == null ? 'Add Quote' : 'Update Quote'}">Add Quote</button>
+                    <a class="btn btn--secondary" th:href="@{/pages/quotes}">Cancel</a>
+                </div>
+                <!-- Vetem ne edit. Butoni i fshirjes i perket formes #delete-quote me poshte (format nuk mund te jene te mbivendosura). -->
+                <details class="confirm" th:if="${quote.id != null}">
+                    <summary class="btn btn--danger">Delete quote</summary>
+                    <div class="confirm__panel">
+                        <p><b>Delete this quote?</b>This cannot be undone.</p>
+                        <div class="confirm__actions">
+                            <button class="btn btn--secondary btn--sm" type="button"
+                                    onclick="this.closest('details').open = false">Cancel</button>
+                            <button class="btn btn--danger btn--sm" type="submit" form="delete-quote">Yes, delete</button>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </form>
+
+        <form id="delete-quote" method="post" th:if="${quote.id != null}"
+              th:action="@{/pages/quotes/{id}/delete(id=${quote.id})}"></form>
+    </div>
 </main>
-
 </body>
 </html>

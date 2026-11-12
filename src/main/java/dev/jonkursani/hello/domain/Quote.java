@@ -1,10 +1,7 @@
 package dev.jonkursani.hello.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,8 +26,11 @@ public class Quote {
     private String text;
 
     // nullable = true, length = 255
-    @NotBlank(message = "Author is required")
-    private String author;
+//    @NotBlank(message = "Author is required")
+//    private String author;
+    @ManyToOne
+    @NotNull(message = "Author is required")
+    private Author author; // foreign key => author_id
 
     // nese te duhet me validu numra (@Min, @Max)
     @Min(value = 0, message = "Year cannot be negative")

@@ -2,28 +2,39 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Fragments</title>
 </head>
 <body>
-    <header th:fragment="header(active)">
-        <nav>
-            <a th:href="@{/pages/quotes}"
-               th:classappend="${active == 'quotes'} ? 'active' : ''">
-                Quotes
-            </a>
-            <a th:href="@{/pages/about}"
-               th:classappend="${active == 'about'} ? 'active' : ''">
-                About us
-            </a>
-            <a th:href="@{/pages/quotes/new}"
-               th:classappend="${active == 'quote-form'} ? 'active' : ''">
-                Add Quote
-            </a>
-        </nav>
+    <!-- Header: brand + main navigation. 'active' marks the current page with aria-current. -->
+    <header class="site-header" th:fragment="header(active)">
+        <div class="site-header__inner">
+            <a class="brand" th:href="@{/pages/quotes}"><span class="brand__mark">“</span>Quotes</a>
+            <nav class="nav" aria-label="Main">
+                <a th:href="@{/pages/quotes}"
+                   th:attr="aria-current=${active == 'quotes'} ? 'page' : null">Quotes</a>
+                <a th:href="@{/pages/quotes/new}"
+                   th:attr="aria-current=${active == 'quote-form'} ? 'page' : null">Add quote</a>
+                <a th:href="@{/pages/about}"
+                   th:attr="aria-current=${active == 'about'} ? 'page' : null">About us</a>
+            </nav>
+        </div>
     </header>
 
-    <footer th:fragment="footer">
-        <p>&copy; Quotes - Cacttus Education - All rights reserved.</p>
+    <footer class="site-footer" th:fragment="footer">
+        <div class="site-footer__inner">
+            <span>&copy; Quotes - Cacttus Education - All rights reserved.</span>
+            <span>2026</span>
+        </div>
     </footer>
+
+    <!-- Icons (stroke icons from the design system). Usage: th:replace="~{fragments :: icon('plus')}" -->
+    <svg th:fragment="icon(name)" class="icon" viewBox="0 0 24 24" aria-hidden="true" th:switch="${name}">
+        <path th:case="'plus'" d="M12 5v14M5 12h14"/>
+        <path th:case="'back'" d="M15 6l-6 6 6 6"/>
+        <path th:case="'edit'" d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>
+        <g th:case="'search'"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></g>
+        <g th:case="'check'"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></g>
+        <g th:case="'alert'"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></g>
+    </svg>
 </body>
 </html>

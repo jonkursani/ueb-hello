@@ -4,16 +4,21 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-<!--    <title th:text="${title}">Title</title>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:replace="${title}">Title</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
+<div class="shell">
     <div th:replace="~{fragments :: header(${active})}"></div>
 
-    <!--    Kontenti dinamik qe ndrrohet    -->
+    <!-- Kontenti dinamik qe ndrrohet: secila faqe e jep <main class="site-main"> -->
     <main th:replace="${content}">Content</main>
 
     <div th:replace="~{fragments :: footer}"></div>
+</div>
 </body>
 </html>

@@ -51,7 +51,7 @@ public class QuotePageController {
     // E shfaq formen qe me i mush te dhenat user-i
     @GetMapping("/quotes/new")
     public String newForm(Model model) {
-        model.addAttribute("quote", new Quote());
+        model.addAttribute("quote", new Quote()); // id: null
         return "quote-form"; // templates/quote-form.html
     }
 
@@ -73,6 +73,44 @@ public class QuotePageController {
         flash.addFlashAttribute("message", "Quote created successfully!");
 
         return "redirect:/pages/quotes"; // redirect te lista me i pa ndryshimet
+    }
+
+    @GetMapping("/quotes/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        // Quota prej DB => id != null
+        var quote = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        model.addAttribute("quote", quote);
+
+        return "quote-form"; // templates/quote-form.html
+    }
+
+    @PostMapping("/quotes/{id}")
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute("quote") Quote quote,
+                         BindingResult result,
+                         RedirectAttributes flash) {
+
+        if (result.hasErrors()) {
+            return "quote-form";
+        }
+
+        // quote: { id: 1 ,text: '', author: '' }
+        // save nese ska id e bon create, nesa ka id e bon update
+        quote.setId(id);
+        repository.save(quote);
+
+        flash.addFlashAttribute("message", "Quote updated successfully!");
+
+        return "redirect:/pages/quotes"; // redirect te lista me i pa ndryshimet
+    }
+
+    @PostMapping("/quotes/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes flash) {
+        repository.deleteById(id);
+        flash.addFlashAttribute("message", "Quote deleted successfully!");
+        return "redirect:/pages/quotes";
     }
 }
 

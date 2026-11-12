@@ -6,10 +6,15 @@
     <title>General Error</title>
 </head>
 <body>
-<main>
-    <h1>General Error</h1>
-    <p>An error occurred while processing your request.</p>
-    <p><a th:href="@{/pages/quotes}">Go back to the quotes page</a></p>
+<main class="site-main">
+    <div class="error-page">
+        <div class="error-page__code" th:text="${status} ?: 'Error'">500</div>
+        <h1>General Error</h1>
+        <p>An error occurred while processing your request.</p>
+        <a class="btn btn--primary" th:href="@{/pages/quotes}">
+            <svg th:replace="~{fragments :: icon('back')}"></svg>Go back to the quotes page
+        </a>
+    </div>
 </main>
 </body>
 </html>
