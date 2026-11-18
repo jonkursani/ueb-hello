@@ -11,13 +11,20 @@
         <h1 class="page-title">Authors</h1>
     </div>
 
-    <ul>
-        <!-- nje rresht per autor; quotes vjen me left join fetch, pa select te dyte -->
-        <li th:each="a : ${authors}">
-            <a th:href="@{/pages/authors/{id}(id=${a.id})}" th:text="${a.name}">Author</a>:
-            <span th:text="|${a.quotes.size()} quotes|">0 quotes</span>
-        </li>
-    </ul>
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+            <tr><th>Author</th><th class="num">Quotes</th></tr>
+            </thead>
+            <tbody>
+            <!-- nje rresht per autor; quotes vjen me left join fetch, pa select te dyte -->
+            <tr th:each="a : ${authors}">
+                <td><a th:href="@{/pages/authors/{id}(id=${a.id})}" th:text="${a.name}">Author</a></td>
+                <td class="num" data-label="Quotes" th:text="${a.quotes.size()}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 </body>
 </html>

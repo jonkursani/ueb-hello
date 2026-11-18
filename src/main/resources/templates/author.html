@@ -13,19 +13,44 @@
         <span th:text="${author.name}">Author</span>
     </nav>
 
-    <div class="page-head">
-        <div>
-            <h1 class="page-title" th:text="${author.name}">Author</h1>
-            <p class="page-sub" th:text="${author.quotes.size()} + ' quotes'">0 quotes</p>
+    <div class="page-head" style="align-items: center">
+        <div class="author-head">
+            <span class="monogram" aria-hidden="true"
+                  th:text="${#strings.isEmpty(author.name)} ? '?' : ${#strings.substring(author.name, 0, 1)}">A</span>
+            <div>
+                <h1 class="page-title" th:text="${author.name}">Author</h1>
+                <div class="meta-list"><span><b th:text="${author.quotes.size()}">0</b> quotes</span></div>
+            </div>
         </div>
     </div>
 
+    <h2 class="section-title" style="margin: 32px 0 16px">Quotes by this author</h2>
+
     <!-- author.quotes: lista me mappedBy, ngarkohet kur template-i e prek -->
-    <ul>
-        <li th:each="q : ${author.quotes}">
-            <a th:href="@{/pages/quotes/{id}(id=${q.id})}" th:text="${q.text}">Quote</a>
-        </li>
-    </ul>
+    <div class="card-grid" th:unless="${author.quotes.isEmpty()}">
+        <figure class="quote-card" th:each="q : ${author.quotes}">
+            <span class="quote-card__mark" aria-hidden="true">“</span>
+            <blockquote class="quote-card__text">
+                <a th:href="@{/pages/quotes/{id}(id=${q.id})}" th:text="${q.text}"
+                   style="color: inherit; text-decoration: none">Quote</a>
+            </blockquote>
+            <figcaption th:if="${q.year != null}">
+                <div class="quote-card__meta"><span th:text="'Year ' + ${q.year}">Year</span></div>
+            </figcaption>
+            <div class="quote-card__actions">
+                <a class="btn btn--secondary btn--sm" th:href="@{/pages/quotes/{id}/edit(id=${q.id})}">Edit</a>
+            </div>
+        </figure>
+    </div>
+
+    <div class="empty-state" th:if="${author.quotes.isEmpty()}">
+        <div class="empty-state__mark" aria-hidden="true">“</div>
+        <h2 th:text="${author.name} + ' has no quotes yet'">Author has no quotes yet</h2>
+        <p>Be the first to save a quote by this author.</p>
+        <a class="btn btn--primary" th:href="@{/pages/quotes/new}">Add quote</a>
+    </div>
+
+    <p style="margin-top: 24px"><a th:href="@{/pages/authors}">← Back to all authors</a></p>
 </main>
 </body>
 </html>
