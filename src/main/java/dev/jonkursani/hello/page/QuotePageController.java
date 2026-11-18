@@ -1,7 +1,11 @@
 package dev.jonkursani.hello.page;
 
+import dev.jonkursani.hello.domain.Author;
 import dev.jonkursani.hello.domain.Quote;
+import dev.jonkursani.hello.domain.Tag;
+import dev.jonkursani.hello.repository.AuthorRepository;
 import dev.jonkursani.hello.repository.QuoteRepository;
+import dev.jonkursani.hello.repository.TagRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -21,6 +25,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuotePageController {
     private final QuoteRepository repository;
+    private final AuthorRepository authorRepository;
+    private final TagRepository tagRepository;
+
+    // ne model per cdo faqe te ketij controller-i (edhe kur forma kthehet me gabime)
+    @ModelAttribute("authors")
+    public List<Author> authors() {
+        return authorRepository.findAll();
+    }
+
+    @ModelAttribute("tags")
+    public List<Tag> tags() {
+        return tagRepository.findAll();
+    }
 
     // GET /pages/quotes?author=Uvejs
     @GetMapping("/quotes")
@@ -30,7 +47,7 @@ public class QuotePageController {
         if (author == null) {
             quotes = repository.findAll(Sort.by("id"));
         } else {
-            quotes = repository.findByAuthorIgnoreCase(author);
+            quotes = repository.findByAuthorNameIgnoreCase(author);
         }
 
         model.addAttribute("quotes", quotes);
@@ -113,30 +130,3 @@ public class QuotePageController {
         return "redirect:/pages/quotes";
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

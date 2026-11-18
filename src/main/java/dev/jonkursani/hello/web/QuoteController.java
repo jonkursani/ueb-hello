@@ -1,6 +1,7 @@
 package dev.jonkursani.hello.web;
 
 import dev.jonkursani.hello.domain.Quote;
+import dev.jonkursani.hello.repository.AuthorRepository;
 import dev.jonkursani.hello.repository.QuoteRepository;
 import dev.jonkursani.hello.service.QuoteStore;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class QuoteController {
 //    private final QuoteStore store;
     private final QuoteRepository store;
+    private final AuthorRepository authorRepository;
 
 //    public QuoteController(QuoteStore store) {
 //        this.store = store;
@@ -39,11 +41,13 @@ public class QuoteController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quote not found"));
     }
 
-    // POST /quotes
+    // POST /quotes?authorId=1&text=...
     @PostMapping
-    public Quote create(@RequestParam String author, @RequestParam String text) {
+    public Quote create(@RequestParam Long authorId, @RequestParam String text) {
+        var author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Author not found"));
         var quote = new Quote();
-//        quote.setAuthor(author);
+        quote.setAuthor(author);
         quote.setText(text);
         return store.save(quote);
     }
@@ -58,7 +62,7 @@ public class QuoteController {
     @GetMapping("/by-author")
     public List<Quote> byAuthor(@RequestParam String author) {
 //        return store.findByAuthor(author);
-        return store.findByAuthorIgnoreCase(author);
+        return store.findByAuthorNameIgnoreCase(author);
     }
 
     // GET /quotes/search?text=Commit
@@ -70,13 +74,13 @@ public class QuoteController {
     // GET /quotes/count?author=Jon
     @GetMapping("/count")
     public long count(@RequestParam String author) {
-        return store.countByAuthor(author);
+        return store.countByAuthorName(author);
     }
 
     // GET /quotes/latest?author=Jon
     @GetMapping("/latest")
     public Quote latest(@RequestParam String author) {
-        return store.findFirstByAuthorIgnoreCaseOrderByIdDesc(author)
+        return store.findFirstByAuthorNameIgnoreCaseOrderByIdDesc(author)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
     }
 

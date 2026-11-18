@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity // JPA
 @Getter // Lombok
@@ -36,6 +38,10 @@ public class Quote {
     @Min(value = 0, message = "Year cannot be negative")
     @Max(2026) // message default => must be less than or equal to 2026
     private Integer year;
+
+    // shume thenie <-> shume tag-e => tabela quote_tags
+    @ManyToMany
+    private Set<Tag> tags = new HashSet<>();
 
     LocalDateTime createdAt;
 

@@ -52,9 +52,15 @@
 
             <div class="field" th:classappend="${#fields.hasErrors('author')} ? 'has-error'">
                 <label class="field__label" for="author">Author <span class="req" aria-hidden="true">*</span></label>
-                <input class="input" type="text" id="author" th:field="*{author}"
-                       aria-describedby="author-err"
-                       th:attr="aria-invalid=${#fields.hasErrors('author')}">
+                <!-- vlera = id e autorit; Spring Data e gjen Author-in me ate id -->
+                <select class="input" id="author" th:field="*{author}"
+                        aria-describedby="author-err"
+                        th:attr="aria-invalid=${#fields.hasErrors('author')}">
+                    <option value="">-- choose --</option>
+                    <option th:each="a : ${authors}"
+                            th:value="${a.id}"
+                            th:text="${a.name}">Author</option>
+                </select>
                 <span class="field__error" id="author-err" th:if="${#fields.hasErrors('author')}">
                     <svg th:replace="~{fragments :: icon('alert')}"></svg>
                     <span th:errors="*{author}">Author is required</span>
@@ -71,6 +77,17 @@
                     <svg th:replace="~{fragments :: icon('alert')}"></svg>
                     <span th:errors="*{year}">Year cannot be negative</span>
                 </span>
+            </div>
+
+            <!-- tag-et: nje checkbox per tag, vlera = id e tag-ut -->
+            <div class="field">
+                <span class="field__label">Tags</span>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap">
+                    <label th:each="t : ${tags}">
+                        <input type="checkbox" th:field="*{tags}" th:value="${t.id}">
+                        <span th:text="${t.name}">tag</span>
+                    </label>
+                </div>
             </div>
 
             <div class="form__actions" style="justify-content: space-between">

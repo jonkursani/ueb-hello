@@ -75,10 +75,13 @@
                     <div class="cell-quote">
                         <a th:href="@{/pages/quotes/{id}(id=${q.id})}" th:text="${q.text}">Quote text</a>
                     </div>
-                    <div class="cell-meta" th:text="'#' + ${q.id}">#1</div>
+                    <div class="cell-meta">
+                        <span th:text="'#' + ${q.id}">#1</span>
+                        <span th:each="t : ${q.tags}" th:text="|#${t.name} |">#tag</span>
+                    </div>
                 </td>
                 <td data-label="Author">
-                    <a th:href="@{/pages/quotes(author=${q.author})}" th:text="${q.author}">Uvejs</a>
+                    <a th:href="@{/pages/authors/{id}(id=${q.author.id})}" th:text="${q.author.name}">Uvejs</a>
                 </td>
                 <td data-label="Year" class="num muted" th:text="${q.year} ?: '—'">2023</td>
                 <td class="col-actions">

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, 'authors')}">
+<head>
+    <title>Authors</title>
+</head>
+<body>
+<main class="site-main">
+    <div class="page-head">
+        <h1 class="page-title">Authors</h1>
+    </div>
+
+    <ul>
+        <!-- nje rresht per autor; quotes vjen me left join fetch, pa select te dyte -->
+        <li th:each="a : ${authors}">
+            <a th:href="@{/pages/authors/{id}(id=${a.id})}" th:text="${a.name}">Author</a>:
+            <span th:text="|${a.quotes.size()} quotes|">0 quotes</span>
+        </li>
+    </ul>
+</main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, 'authors')}">
+<head>
+    <title th:text="${author.name}">Author</title>
+</head>
+<body>
+<main class="site-main">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a th:href="@{/pages/authors}">Authors</a>
+        <span aria-hidden="true">/</span>
+        <span th:text="${author.name}">Author</span>
+    </nav>
+
+    <div class="page-head">
+        <div>
+            <h1 class="page-title" th:text="${author.name}">Author</h1>
+            <p class="page-sub" th:text="${author.quotes.size()} + ' quotes'">0 quotes</p>
+        </div>
+    </div>
+
+    <!-- author.quotes: lista me mappedBy, ngarkohet kur template-i e prek -->
+    <ul>
+        <li th:each="q : ${author.quotes}">
+            <a th:href="@{/pages/quotes/{id}(id=${q.id})}" th:text="${q.text}">Quote</a>
+        </li>
+    </ul>
+</main>
+</body>
+</html>

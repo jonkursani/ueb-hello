@@ -14,6 +14,8 @@
                    th:attr="aria-current=${active == 'quotes'} ? 'page' : null">Quotes</a>
                 <a th:href="@{/pages/quotes/new}"
                    th:attr="aria-current=${active == 'quote-form'} ? 'page' : null">Add quote</a>
+                <a th:href="@{/pages/authors}"
+                   th:attr="aria-current=${active == 'authors'} ? 'page' : null">Authors</a>
                 <a th:href="@{/pages/about}"
                    th:attr="aria-current=${active == 'about'} ? 'page' : null">About us</a>
             </nav>
