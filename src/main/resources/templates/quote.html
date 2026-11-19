@@ -17,9 +17,9 @@
         <div class="quote-card__mark" aria-hidden="true">“</div>
         <blockquote class="quote-card__text" th:text="${quote.text}">Quote text</blockquote>
         <p class="quote-card__author">
-            <a th:href="@{/pages/authors/{id}(id=${quote.author.id})}"
-               th:text="${quote.author.name}"
-               th:title="'All quotes by ' + ${quote.author.name}">Uvejs</a>
+            <a th:href="@{/pages/authors/{id}(id=${quote.authorId})}"
+               th:text="${quote.authorName}"
+               th:title="'All quotes by ' + ${quote.authorName}">Uvejs</a>
         </p>
         <p class="quote-card__meta">
             <span th:if="${quote.year}" th:text="${quote.year}">2023</span>

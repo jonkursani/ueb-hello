@@ -1,6 +1,5 @@
 package dev.jonkursani.hello.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -24,7 +23,6 @@ public class Author {
     private String name;
 
     // nje autor -> shume thenie; kolona author_id eshte te Quote.author
-    @JsonIgnore // JSON-i e le jashte kete liste (perndryshe s'mbaron)
     @OneToMany(mappedBy = "author")
     private List<Quote> quotes = new ArrayList<>();
 }

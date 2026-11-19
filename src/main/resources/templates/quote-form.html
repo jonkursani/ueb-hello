@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::title}, ~{::main}, ${quote.id == null ? 'quote-form' : ''})}"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, ${quoteId == null ? 'quote-form' : ''})}"
 >
 <head>
-    <title th:text="${quote.id == null ? 'Add quote' : 'Update quote'}">Quote form title</title>
+    <title th:text="${quoteId == null ? 'Add quote' : 'Update quote'}">Quote form title</title>
 </head>
 <body>
 <main class="site-main">
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a th:href="@{/pages/quotes}">Quotes</a>
         <span aria-hidden="true">/</span>
-        <span th:text="${quote.id == null ? 'New' : 'Edit #' + quote.id}">New</span>
+        <span th:text="${quoteId == null ? 'New' : 'Edit #' + quoteId}">New</span>
     </nav>
 
     <div class="page-head">
         <div>
-            <h1 class="page-title" th:text="${quote.id == null ? 'Add a new quote' : 'Update quote'}">Quote form</h1>
+            <h1 class="page-title" th:text="${quoteId == null ? 'Add a new quote' : 'Update quote'}">Quote form</h1>
             <p class="page-sub">Fields marked * are required.</p>
         </div>
     </div>
@@ -31,9 +31,9 @@
         <form class="form"
               th:object="${quote}"
               method="post"
-              th:action="${quote.id == null}
+              th:action="${quoteId == null}
                          ? @{/pages/quotes}
-                         : @{/pages/quotes/{id}(id=${quote.id})}">
+                         : @{/pages/quotes/{id}(id=${quoteId})}">
 
             <div class="field" th:classappend="${#fields.hasErrors('text')} ? 'has-error'">
                 <label class="field__label" for="text">Text <span class="req" aria-hidden="true">*</span></label>
@@ -50,20 +50,20 @@
                 </span>
             </div>
 
-            <div class="field" th:classappend="${#fields.hasErrors('author')} ? 'has-error'">
+            <div class="field" th:classappend="${#fields.hasErrors('authorId')} ? 'has-error'">
                 <label class="field__label" for="author">Author <span class="req" aria-hidden="true">*</span></label>
-                <!-- vlera = id e autorit; Spring Data e gjen Author-in me ate id -->
-                <select class="input" id="author" th:field="*{author}"
+                <!-- vlera = id e autorit; QuoteService e gjen Author-in me ate id -->
+                <select class="input" id="author" th:field="*{authorId}"
                         aria-describedby="author-err"
-                        th:attr="aria-invalid=${#fields.hasErrors('author')}">
+                        th:attr="aria-invalid=${#fields.hasErrors('authorId')}">
                     <option value="">-- choose --</option>
                     <option th:each="a : ${authors}"
                             th:value="${a.id}"
                             th:text="${a.name}">Author</option>
                 </select>
-                <span class="field__error" id="author-err" th:if="${#fields.hasErrors('author')}">
+                <span class="field__error" id="author-err" th:if="${#fields.hasErrors('authorId')}">
                     <svg th:replace="~{fragments :: icon('alert')}"></svg>
-                    <span th:errors="*{author}">Author is required</span>
+                    <span th:errors="*{authorId}">Author is required</span>
                 </span>
             </div>
 
@@ -84,7 +84,7 @@
                 <span class="field__label">Tags</span>
                 <div style="display: flex; gap: 16px; flex-wrap: wrap">
                     <label th:each="t : ${tags}">
-                        <input type="checkbox" th:field="*{tags}" th:value="${t.id}">
+                        <input type="checkbox" th:field="*{tagIds}" th:value="${t.id}">
                         <span th:text="${t.name}">tag</span>
                     </label>
                 </div>
@@ -93,11 +93,11 @@
             <div class="form__actions" style="justify-content: space-between">
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; flex: 1">
                     <button class="btn btn--primary" type="submit"
-                            th:text="${quote.id == null ? 'Add Quote' : 'Update Quote'}">Add Quote</button>
+                            th:text="${quoteId == null ? 'Add Quote' : 'Update Quote'}">Add Quote</button>
                     <a class="btn btn--secondary" th:href="@{/pages/quotes}">Cancel</a>
                 </div>
                 <!-- Vetem ne edit. Butoni i fshirjes i perket formes #delete-quote me poshte (format nuk mund te jene te mbivendosura). -->
-                <details class="confirm" th:if="${quote.id != null}">
+                <details class="confirm" th:if="${quoteId != null}">
                     <summary class="btn btn--danger">Delete quote</summary>
                     <div class="confirm__panel">
                         <p><b>Delete this quote?</b>This cannot be undone.</p>
@@ -111,8 +111,8 @@
             </div>
         </form>
 
-        <form id="delete-quote" method="post" th:if="${quote.id != null}"
-              th:action="@{/pages/quotes/{id}/delete(id=${quote.id})}"></form>
+        <form id="delete-quote" method="post" th:if="${quoteId != null}"
+              th:action="@{/pages/quotes/{id}/delete(id=${quoteId})}"></form>
     </div>
 </main>
 </body>

@@ -1,104 +1,90 @@
 package dev.jonkursani.hello.web;
 
-import dev.jonkursani.hello.domain.Quote;
-import dev.jonkursani.hello.repository.AuthorRepository;
-import dev.jonkursani.hello.repository.QuoteRepository;
-import dev.jonkursani.hello.service.QuoteStore;
+import dev.jonkursani.hello.dto.QuoteRequest;
+import dev.jonkursani.hello.dto.QuoteResponse;
+import dev.jonkursani.hello.service.QuoteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/quotes")
 @RequiredArgsConstructor
 public class QuoteController {
-//    private final QuoteStore store;
-    private final QuoteRepository store;
-    private final AuthorRepository authorRepository;
-
-//    public QuoteController(QuoteStore store) {
-//        this.store = store;
-//    }
+    // controller-i njeh vetem service-in, jo repository-t
+    private final QuoteService service;
 
     // GET /quotes
     @GetMapping
-    public List<Quote> all() {
-        return store.findAll();
+    public List<QuoteResponse> all() {
+        return service.findAll();
     }
 
     // GET /quotes/1
     @GetMapping("/{id}")
-    public Quote one(@PathVariable Long id) {
-        return store.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quote not found"));
+    public QuoteResponse one(@PathVariable Long id) {
+        return service.findById(id);
     }
 
-    // POST /quotes?authorId=1&text=...
+    // POST /quotes {"text":"...","authorId":1,"tagIds":[2,3],"year":1597}
     @PostMapping
-    public Quote create(@RequestParam Long authorId, @RequestParam String text) {
-        var author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Author not found"));
-        var quote = new Quote();
-        quote.setAuthor(author);
-        quote.setText(text);
-        return store.save(quote);
+    @ResponseStatus(HttpStatus.CREATED)
+    public QuoteResponse create(@Valid @RequestBody QuoteRequest request) {
+        return service.create(request);
+    }
+
+    // PUT /quotes/1
+    @PutMapping("/{id}")
+    public QuoteResponse update(@PathVariable Long id, @Valid @RequestBody QuoteRequest request) {
+        return service.update(id, request);
     }
 
     // DELETE /quotes/1
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        store.deleteById(id);
+        service.delete(id);
     }
 
     // GET /quotes/by-author?author=Jon
     @GetMapping("/by-author")
-    public List<Quote> byAuthor(@RequestParam String author) {
-//        return store.findByAuthor(author);
-        return store.findByAuthorNameIgnoreCase(author);
+    public List<QuoteResponse> byAuthor(@RequestParam String author) {
+        return service.findByAuthor(author);
     }
 
     // GET /quotes/search?text=Commit
     @GetMapping("/search")
-    public List<Quote> search(@RequestParam String text) {
-        return store.findByTextContainingIgnoreCase(text);
+    public List<QuoteResponse> search(@RequestParam String text) {
+        return service.search(text);
     }
 
     // GET /quotes/count?author=Jon
     @GetMapping("/count")
     public long count(@RequestParam String author) {
-        return store.countByAuthorName(author);
+        return service.countByAuthor(author);
     }
 
     // GET /quotes/latest?author=Jon
     @GetMapping("/latest")
-    public Quote latest(@RequestParam String author) {
-        return store.findFirstByAuthorNameIgnoreCaseOrderByIdDesc(author)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
+    public QuoteResponse latest(@RequestParam String author) {
+        return service.latest(author);
     }
 
     // GET /quotes/sorted-by?by=author&dir=desc
     @GetMapping("/sorted-by")
-    public List<Quote> sortedBy(@RequestParam String by, @RequestParam String dir) {
-        Sort.Direction direction = Sort.Direction.fromString(dir);
-        Sort sort = Sort.by(direction, by);
-        return store.findAll(sort);
+    public List<QuoteResponse> sortedBy(@RequestParam String by, @RequestParam String dir) {
+        return service.sortedBy(by, dir);
     }
 
     // GET /quotes/pages?page=0&size=2
     @GetMapping("/pages")
-    public Page<Quote> pages(
+    public Page<QuoteResponse> pages(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        Page<Quote> result = store.findAll(pageable);
-        return result;
+        return service.pages(page, size);
     }
 }

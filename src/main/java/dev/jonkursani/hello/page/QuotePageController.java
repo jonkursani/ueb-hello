@@ -1,22 +1,21 @@
 package dev.jonkursani.hello.page;
 
 import dev.jonkursani.hello.domain.Author;
-import dev.jonkursani.hello.domain.Quote;
 import dev.jonkursani.hello.domain.Tag;
+import dev.jonkursani.hello.dto.QuoteRequest;
+import dev.jonkursani.hello.dto.QuoteResponse;
 import dev.jonkursani.hello.repository.AuthorRepository;
-import dev.jonkursani.hello.repository.QuoteRepository;
 import dev.jonkursani.hello.repository.TagRepository;
+import dev.jonkursani.hello.service.QuoteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashSet;
 import java.util.List;
 
 //@RestController // API
@@ -24,7 +23,7 @@ import java.util.List;
 @RequestMapping("/pages")
 @RequiredArgsConstructor
 public class QuotePageController {
-    private final QuoteRepository repository;
+    private final QuoteService service;
     private final AuthorRepository authorRepository;
     private final TagRepository tagRepository;
 
@@ -42,12 +41,12 @@ public class QuotePageController {
     // GET /pages/quotes?author=Uvejs
     @GetMapping("/quotes")
     public String list(@RequestParam(required = false) String author, Model model) {
-        List<Quote> quotes;
+        List<QuoteResponse> quotes;
 
         if (author == null) {
-            quotes = repository.findAll(Sort.by("id"));
+            quotes = service.findAll();
         } else {
-            quotes = repository.findByAuthorNameIgnoreCase(author);
+            quotes = service.findByAuthor(author);
         }
 
         model.addAttribute("quotes", quotes);
@@ -57,23 +56,20 @@ public class QuotePageController {
     // GET /pages/quotes/1
     @GetMapping("/quotes/{id}")
     public String one(@PathVariable Long id, Model model) {
-        var quote = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        model.addAttribute("quote", quote);
-
+        model.addAttribute("quote", service.findById(id));
         return "quote"; // templates/quote.html
     }
 
     // E shfaq formen qe me i mush te dhenat user-i
     @GetMapping("/quotes/new")
     public String newForm(Model model) {
-        model.addAttribute("quote", new Quote()); // id: null
+        // pa quoteId ne model => forma e di qe eshte "e re"
+        model.addAttribute("quote", new QuoteRequest(null, null, new HashSet<>(), null));
         return "quote-form"; // templates/quote-form.html
     }
 
     @PostMapping("/quotes")
-    public String create(@Valid @ModelAttribute("quote") Quote quote,
+    public String create(@Valid @ModelAttribute("quote") QuoteRequest quote,
                          BindingResult result,
                          RedirectAttributes flash) {
 
@@ -84,8 +80,7 @@ public class QuotePageController {
             return "quote-form";
         }
 
-        // quote: { text: '', author: '' }
-        repository.save(quote);
+        service.create(quote);
 
         flash.addFlashAttribute("message", "Quote created successfully!");
 
@@ -94,29 +89,25 @@ public class QuotePageController {
 
     @GetMapping("/quotes/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        // Quota prej DB => id != null
-        var quote = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        model.addAttribute("quote", quote);
-
+        model.addAttribute("quote", service.findForEdit(id));
+        // QuoteRequest s'ka id, prandaj forma e merr vec
+        model.addAttribute("quoteId", id);
         return "quote-form"; // templates/quote-form.html
     }
 
     @PostMapping("/quotes/{id}")
     public String update(@PathVariable Long id,
-                         @Valid @ModelAttribute("quote") Quote quote,
+                         @Valid @ModelAttribute("quote") QuoteRequest quote,
                          BindingResult result,
+                         Model model,
                          RedirectAttributes flash) {
 
         if (result.hasErrors()) {
+            model.addAttribute("quoteId", id); // forma me gabime ka nevoje prape per id
             return "quote-form";
         }
 
-        // quote: { id: 1 ,text: '', author: '' }
-        // save nese ska id e bon create, nesa ka id e bon update
-        quote.setId(id);
-        repository.save(quote);
+        service.update(id, quote);
 
         flash.addFlashAttribute("message", "Quote updated successfully!");
 
@@ -125,7 +116,7 @@ public class QuotePageController {
 
     @PostMapping("/quotes/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes flash) {
-        repository.deleteById(id);
+        service.delete(id);
         flash.addFlashAttribute("message", "Quote deleted successfully!");
         return "redirect:/pages/quotes";
     }

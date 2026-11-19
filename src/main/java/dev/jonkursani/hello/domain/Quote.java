@@ -34,9 +34,7 @@ public class Quote {
     @NotNull(message = "Author is required")
     private Author author; // foreign key => author_id
 
-    // nese te duhet me validu numra (@Min, @Max)
-    @Min(value = 0, message = "Year cannot be negative")
-    @Max(2026) // message default => must be less than or equal to 2026
+    // validimi i vitit tani eshte te QuoteRequest (@NotFutureYear)
     private Integer year;
 
     // shume thenie <-> shume tag-e => tabela quote_tags
