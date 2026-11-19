@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Fragments</title>
@@ -19,6 +20,12 @@
                 <a th:href="@{/pages/about}"
                    th:attr="aria-current=${active == 'about'} ? 'page' : null">About us</a>
             </nav>
+            <!-- sec: vjen nga thymeleaf-extras-springsecurity6 -->
+            <span style="display: flex; align-items: center; gap: 8px" sec:authorize="isAuthenticated()">
+                Përshëndetje, <b sec:authentication="name">arta</b>
+                <form th:action="@{/logout}" method="post"><button class="btn btn--ghost btn--sm">Dil</button></form>
+            </span>
+            <a class="btn btn--secondary btn--sm" sec:authorize="isAnonymous()" th:href="@{/login}">Hyr</a>
         </div>
     </header>
 

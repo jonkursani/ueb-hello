@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="sq"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main}, 'login')}">
+<head>
+    <title>Hyr</title>
+</head>
+<body>
+<main class="site-main">
+    <div class="page-head">
+        <h1 class="page-title">Hyr</h1>
+    </div>
+
+    <div class="panel" style="max-width: 480px">
+        <div class="flash flash--error" role="alert" th:if="${param.error}">
+            <svg th:replace="~{fragments :: icon('alert')}"></svg>
+            <span>Emri ose fjalëkalimi është gabim</span>
+        </div>
+        <div class="flash flash--success" role="status" th:if="${param.logout}">
+            <svg th:replace="~{fragments :: icon('check')}"></svg>
+            <span>Dolët nga llogaria</span>
+        </div>
+
+        <!-- th:action shton vetë fushën e fshehur _csrf -->
+        <form class="form" th:action="@{/login}" method="post">
+            <div class="field">
+                <label class="field__label" for="username">Emri</label>
+                <input class="input" id="username" name="username" autofocus>
+            </div>
+            <div class="field">
+                <label class="field__label" for="password">Fjalëkalimi</label>
+                <input class="input" id="password" type="password" name="password">
+            </div>
+            <div class="form__actions">
+                <button class="btn btn--primary" type="submit">Hyr</button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
